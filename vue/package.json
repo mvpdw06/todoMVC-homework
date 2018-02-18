@@ -1,0 +1,24 @@
+{
+  "name": "vue",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "babel-node ./devServer.js",
+    "format": "prettier --single-quote --no-semi --write './src/**/*.js'",
+    "format:vue": "prettier --single-quote --no-semi --write './src/**/*.vue'"
+  },
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "css-loader": "^0.28.9",
+    "prettier": "^1.10.2",
+    "style-loader": "^0.20.2",
+    "vue": "^2.5.13",
+    "vue-loader": "^14.1.1",
+    "vue-template-compiler": "^2.5.13",
+    "webpack": "^3.11.0",
+    "webpack-dev-server": "^2.11.1"
+  }
+}
