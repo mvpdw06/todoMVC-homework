@@ -1,11 +1,9 @@
 import todoapp from './todoapp/todoapp'
 import info from './info/info'
-import appHeader from './todoapp/app-header/app-header'
 
 export default {
   comments: {
     todoapp,
-    appHeader,
     info
   },
   data() {

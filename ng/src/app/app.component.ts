@@ -8,15 +8,15 @@ import { Component, OnInit } from '@angular/core'
         [addTodo]="addTodo"
       ></app-header>
       <app-main
-        [todos]="showTodos"
+        [todos]="filteredTodos"
         [toggleTodo]="toggleTodo"
         [deleteTodo]="deleteTodo"
         [toggleAllCompleted]="toggleAllCompleted"
       ></app-main>
       <app-footer
-        [displayCount]="getUncompletedCount()"
+        [displayCount]="uncompletedCount"
         [changeFilter]="changeFilter"
-        [canDisplayClearButton]="getCanDisplayClearButton()"
+        [canDisplayClearButton]="canDisplayClearButton"
         [clearAllCompleted]="clearAllCompleted"
       ></app-footer>
     </div>
@@ -37,18 +37,22 @@ export class AppComponent {
       completed: true
     }
   ]
-  showTodos = [
-    {
-      key: 0,
-      name: 'todo1',
-      completed: false
-    },
-    {
-      key: 1,
-      name: 'todo2',
-      completed: true
+  get filteredTodos () {
+    switch (this.filterType) {
+      case 'Active':
+        return this.todos.filter(x => !x.completed)
+      case 'Completed':
+        return this.todos.filter(x => x.completed)
+      default:
+        return this.todos
     }
-  ]
+  }
+  get uncompletedCount () {
+    return this.todos.filter(todo => !todo.completed).length
+  }
+  get canDisplayClearButton () {
+    return this.todos.filter(todo => todo.completed).length > 0
+  }
   addTodo = name => {
     if (!name.trim()) {
       return false
@@ -61,22 +65,19 @@ export class AppComponent {
         completed: false
       }
     ]
-
+    
     this.todos = newTodos
-    this.showTodos = this.filterTodos(newTodos, this.filterType)
   }
   toggleTodo = key => {
     const target = this.todos.find(todo => todo.key === key)
     if (target) {
       target.completed = !target.completed
-      this.showTodos = this.filterTodos(this.todos, this.filterType)
     }
   }
   deleteTodo = key => {
     const targetIndex = this.todos.findIndex(todo => todo.key === key)
     if (targetIndex !== -1) {
       this.todos.splice(targetIndex, 1)
-      this.showTodos = this.filterTodos(this.todos, this.filterType)
     }
   }
   toggleAllCompleted = () => {
@@ -87,39 +88,11 @@ export class AppComponent {
     this.todos.map(todo => {
       todo.completed = flag
     })
-
-    this.showTodos = this.filterTodos(this.todos, this.filterType)
   }
   changeFilter = filterType => {
     this.filterType = filterType
-
-    this.showTodos = this.filterTodos(this.todos, this.filterType)
-  }
-  filterTodos = (todos, filterType) => {
-    let showTodos = []
-    switch (filterType) {
-      case 'Active':
-        showTodos = todos.filter(x => !x.completed)
-        break
-      case 'Completed':
-        showTodos = todos.filter(x => x.completed)
-        break
-      default:
-        showTodos = todos
-        break
-    }
-    return showTodos
   }
   clearAllCompleted = () => {
-    const newTodos = this.todos.filter(todo => !todo.completed)
-
-    this.todos = newTodos
-    this.showTodos = this.filterTodos(newTodos, this.filterType)
-  }
-  getUncompletedCount = () => {
-    return this.todos.filter(todo => !todo.completed).length
-  }
-  getCanDisplayClearButton = () => {
-    return this.todos.filter(todo => todo.completed).length > 0
+    this.todos = this.todos.filter(todo => !todo.completed)
   }
 }

@@ -27,7 +27,7 @@ import { Component, Input } from '@angular/core'
   `
 })
 export default class FooterComponent {
-  @Input() displayCount
+  @Input() displayCount: string
   @Input() changeFilter
   @Input() canDisplayClearButton
   @Input() clearAllCompleted

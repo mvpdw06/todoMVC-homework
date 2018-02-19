@@ -18,19 +18,27 @@ class TodoApp extends Component {
         name: 'todo2',
         completed: true
       }
-    ],
-    showTodos: [
-      {
-        key: 0,
-        name: 'todo1',
-        completed: false
-      },
-      {
-        key: 1,
-        name: 'todo2',
-        completed: true
-      }
     ]
+  }
+  get filteredTodos () {
+    const {
+      filterType,
+      todos
+    } = this.state
+    switch (filterType) {
+      case 'Active':
+        return todos.filter(x => !x.completed)
+      case 'Completed':
+        return todos.filter(x => x.completed)
+      default:
+        return todos
+    }
+  }
+  get uncompletedCount () {
+    return this.state.todos.filter(todo => !todo.completed).length
+  }
+  get canDisplayClearButton () {
+    return this.state.todos.filter(todo => todo.completed).length > 0
   }
   addTodo = name => {
     const { todos, filterType } = this.state
@@ -43,8 +51,7 @@ class TodoApp extends Component {
       }
     ]
     this.setState({
-      todos: newTodos,
-      showTodos: this.filterTodos(newTodos, filterType)
+      todos: newTodos
     })
   }
   toggleTodo = key => {
@@ -53,8 +60,7 @@ class TodoApp extends Component {
     if (target) {
       target.completed = !target.completed
       this.setState({
-        todos,
-        showTodos: this.filterTodos(todos, filterType)
+        todos
       })
     }
   }
@@ -64,8 +70,7 @@ class TodoApp extends Component {
     if (targetIndex !== -1) {
       todos.splice(targetIndex, 1)
       this.setState({
-        todos,
-        showTodos: this.filterTodos(todos, filterType)
+        todos
       })
     }
   }
@@ -80,36 +85,15 @@ class TodoApp extends Component {
     })
 
     this.setState({
-      todos,
-      showTodos: this.filterTodos(todos, filterType)
+      todos
     })
   }
-  getUncompletedCount = () => {
-    const { todos } = this.state
-    return todos.filter(todo => !todo.completed).length
-  }
   changeFilter = filterType => {
-    const { todos, showTodos } = this.state
+    const { todos } = this.state
 
     this.setState({
       filterType,
-      showTodos: this.filterTodos(todos, filterType)
     })
-  }
-  filterTodos = (todos, filterType) => {
-    let showTodos = []
-    switch (filterType) {
-      case 'Active':
-        showTodos = todos.filter(x => !x.completed)
-        break
-      case 'Completed':
-        showTodos = todos.filter(x => x.completed)
-        break
-      default:
-        showTodos = todos
-        break
-    }
-    return showTodos
   }
   clearAllCompleted = () => {
     const { todos, filterType } = this.state
@@ -117,28 +101,23 @@ class TodoApp extends Component {
 
     this.setState({
       todos: newTodos,
-      showTodos: this.filterTodos(newTodos, filterType)
     })
   }
-  getCanDisplayClearButton = () => {
-    const { todos } = this.state
-    return todos.filter(todo => todo.completed).length > 0
-  }
   render() {
-    const { showTodos } = this.state
+    const { filteredTodos } = this.state
     return (
       <div className="todoapp">
         <Header addTodo={this.addTodo} />
         <Main
-          todos={showTodos}
+          todos={this.filteredTodos}
           toggleTodo={this.toggleTodo}
           deleteTodo={this.deleteTodo}
           toggleAllCompleted={this.toggleAllCompleted}
         />
         <Footer
-          displayCount={this.getUncompletedCount()}
+          displayCount={this.uncompletedCount}
           changeFilter={this.changeFilter}
-          canDisplayClearButton={this.getCanDisplayClearButton()}
+          canDisplayClearButton={this.canDisplayClearButton}
           clearAllCompleted={this.clearAllCompleted}
         />
       </div>
